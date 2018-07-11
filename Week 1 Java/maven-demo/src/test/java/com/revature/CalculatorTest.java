@@ -1,9 +1,6 @@
 package com.revature;
 
 import static org.junit.Assert.assertEquals;
-
-import java.beans.Transient;
-
 import org.junit.*;
 
 public class CalculatorTest {
