@@ -1,0 +1,220 @@
+connect moviedb/p4ssw0rd;
+
+-- Joins
+CREATE TABLE GENRES (
+    g_id INTEGER CONSTRAINT genre_pk PRIMARY KEY,
+    g_name VARCHAR2(50) NOT NULL
+);
+
+CREATE TABLE STUDIOS (
+    s_id INTEGER CONSTRAINT studio_pk PRIMARY KEY,
+    s_name VARCHAR2(50) NOT NULL
+);
+
+CREATE TABLE MOVIES (
+    m_id INTEGER PRIMARY KEY,
+    m_name VARCHAR2(100) NOT NULL,
+    m_date DATE,
+    m_genre INTEGER,
+    m_studio INTEGER,
+    FOREIGN KEY (m_genre) REFERENCES GENRES(g_id),
+    FOREIGN KEY (m_studio) REFERENCES STUDIOS(s_id)
+);
+
+INSERT INTO GENRES VALUES (1, 'Comedy');
+INSERT INTO GENRES VALUES (2, 'Horror');
+INSERT INTO GENRES VALUES (3, 'Sci-fi Action');
+
+INSERT INTO STUDIOS VALUES (1, 'WB');
+INSERT INTO STUDIOS VALUES (2, 'MGM');
+INSERT INTO STUDIOS VALUES (3, 'Fox');
+
+INSERT INTO MOVIES VALUES (1, 'Rush Hour', CURRENT_TIMESTAMP, 1, 2);
+INSERT INTO MOVIES VALUES (2, 'Star Wars', CURRENT_TIMESTAMP, 3, 3);
+INSERT INTO MOVIES VALUES (3, 'Get Out', CURRENT_TIMESTAMP, 2, 1);
+
+-- Inner join: TABLEA inner join TABLEB on FK = PK
+SELECT m_name, g_name FROM GENRES INNER JOIN MOVIES ON m_genre = g_id;
+
+-- Union
+SELECT * FROM GENRES INNER JOIN MOVIES ON m_genre = g_id WHERE g_name = 'Horror'
+UNION
+SELECT * FROM GENRES G INNER JOIN MOVIES M ON M.m_genre = G.g_id WHERE g_name = 'Horror';
+
+-- SUPER JOIN
+SELECT * FROM GENRES 
+INNER JOIN MOVIES ON m_genre = g_id
+INNER JOIN STUDIOS ON m_studio = s_id
+WHERE G_NAME = 'Horror';
+
+-- CROSS JOIN
+SELECT * FROM MOVIES CROSS JOIN GENRES;
+
+-- Constraints
+-- Primary Key, Foreign Key, Not Null, Unique, Default, Check
+CREATE TABLE PERSONS (
+    P_ID INTEGER PRIMARY KEY,
+    P_NAME VARCHAR2(100) NOT NULL,
+    P_AGE INTEGER CHECK(P_AGE > 18),
+    P_COUNTRY VARCHAR2(100) DEFAULT 'USA',
+    P_SSN NUMBER UNIQUE NOT NULL
+);
+
+--IN: allows you to specify values in WHERE clauses
+SELECT * FROM GENRES WHERE g_name IN ('Horror', 'Comedy');
+
+-- Subqueries: Correlated (subquery is not independent) vs non-correlated
+SELECT * FROM MOVIES WHERE m_genre IN (SELECT m_genre FROM MOVIES WHERE m_genre = 2);
+
+-- EXISTS: test for existence, returns true if one or more is returned
+SELECT * FROM MOVIES WHERE EXISTS (SELECT g_name FROM GENRES WHERE g_id = 2);
+
+
+/* PL/SQL */
+CREATE TABLE CAVE (
+    Cave_Id INTEGER PRIMARY KEY,
+    Cave_Name VARCHAR2(50) UNIQUE,
+    Max_Bears INTEGER DEFAULT 4
+);
+
+CREATE TABLE BEAR_TYPE (
+    Bear_Type_Id INTEGER PRIMARY KEY,
+    Bear_Type_Name VARCHAR2(50)
+);
+
+CREATE TABLE BEAR (
+    Bear_Id INTEGER PRIMARY KEY,
+    Bear_Name VARCHAR2(50),
+    Bear_Age INTEGER CHECK (Bear_Age > 0),
+    Bear_Weight INTEGER CHECK (Bear_Weight > 0),
+    Bear_Type_Id INTEGER,
+    Cave_Id INTEGER
+);
+
+CREATE TABLE BEEHIVE (
+    Beehive_Id INTEGER PRIMARY KEY,
+    Beehive_Weight INTEGER DEFAULT 50 CHECK (Beehive_Weight > 0)
+);
+
+CREATE TABLE BEAR_BEEHIVE (
+    Bear_Id INTEGER,
+    Beehive_Id INTEGER,
+    CONSTRAINT PK_BearBeehive PRIMARY KEY (Bear_Id, Beehive_Id)
+);
+
+-- Create foreign keys
+ALTER TABLE BEAR ADD CONSTRAINT FK_Bear_Type_Id
+FOREIGN KEY (Bear_Type_Id)
+REFERENCES BEAR_TYPE (Bear_Type_Id);
+
+ALTER TABLE BEAR ADD CONSTRAINT FK_Cave_Id
+FOREIGN KEY (Cave_Id)
+REFERENCES CAVE (Cave_Id);
+
+ALTER TABLE BEAR_BEEHIVE ADD CONSTRAINT FK_Bear_Id
+FOREIGN KEY (Bear_Id)
+REFERENCES BEAR (Bear_Id);
+
+ALTER TABLE BEAR_BEEHIVE ADD CONSTRAINT FK_Beehive_Id
+FOREIGN KEY (Beehive_Id)
+REFERENCES BEEHIVE (Beehive_Id);
+
+-- Populate
+INSERT INTO CAVE (Cave_Id, Cave_Name, Max_Bears)
+VALUES (1, 'Yosemite', 4);
+INSERT INTO CAVE (Cave_Id, Cave_Name, Max_Bears)
+VALUES (2, 'Yellowstone', 5);
+
+INSERT INTO BEEHIVE VALUES (1, 35);
+INSERT INTO BEEHIVE VALUES (2, 55);
+
+INSERT INTO BEAR_TYPE VALUES (1, 'Picnic');
+
+INSERT INTO BEAR VALUES (1, 'Yogi', 30, 400, 1, 1);
+INSERT INTO BEAR VALUES (2, 'Boo Boo', 30, 200, 1, 2);
+
+INSERT INTO BEAR_BEEHIVE VALUES (1, 1);
+INSERT INTO BEAR_BEEHIVE VALUES (2, 2);
+
+-- Sequence
+CREATE SEQUENCE SQ_BEAR_PK START WITH 3 INCREMENT BY 1;
+
+-- Trigger (before insert, use sequence)
+CREATE OR REPLACE TRIGGER TR_INSERT_BEAR
+BEFORE INSERT ON BEAR
+FOR EACH ROW
+BEGIN
+    SELECT SQ_BEAR_PK.NEXTVAL INTO :NEW.Bear_Id FROM DUAL;
+END;
+/
+
+-- View
+CREATE VIEW VW_BEARS_PER_CAVE (Location, Total) AS
+SELECT Cave_Name, COUNT(Bear_Id) FROM CAVE, BEAR
+WHERE BEAR.Cave_Id = CAVE.Cave_Id
+GROUP BY Cave_Name;
+
+SELECT * FROM VW_BEARS_PER_CAVE;
+
+-- Functions: executable blocks of code, 0 or many input parameters, 0 or 1 simple output, no DML, 
+-- can call other functions or views, but not stored procedures
+CREATE OR REPLACE FUNCTION 
+FIND_MAX_NUMBER (X IN NUMBER, Y IN NUMBER) 
+RETURN NUMBER AS Z NUMBER;
+BEGIN
+    IF X > Y THEN Z:=X;
+    ELSE Z:=Y;
+    END IF;
+    RETURN Z;
+END;
+/
+
+-- Running function
+DECLARE
+    FIRST_NUM NUMBER;
+    SECOND_NUM NUMBER;
+    MAX_NUM NUMBER;
+BEGIN
+    FIRST_NUM:=22;
+    SECOND_NUM:=42;
+    MAX_NUM:= FIND_MAX_NUMBER(FIRST_NUM, SECOND_NUM);
+    DBMS_OUTPUT.PUT_LINE('MAX= ' || MAX_NUM);
+END;
+/
+
+-- Stored Procedures - same as function, but 0 or many complex outputs, can use DML
+CREATE OR REPLACE PROCEDURE HELLO_WORLD_SP IS
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('Hello World');
+END;
+/
+
+-- Call it
+BEGIN
+    HELLO_WORLD_SP;
+END;
+/
+
+-- Cursors
+CREATE OR REPLACE PROCEDURE GET_ALL_BEARS (S OUT SYS_REFCURSOR) AS
+BEGIN
+    OPEN S FOR
+    SELECT BEAR_ID, BEAR_NAME FROM BEAR;
+END;
+/
+
+-- How to run in Oracle
+DECLARE
+    S SYS_REFCURSOR;
+    SOME_ID BEAR.BEAR_ID%TYPE;
+    SOME_NAME BEAR.BEAR_NAME%TYPE;
+BEGIN
+    GET_ALL_BEARS(S);
+    LOOP
+        FETCH S INTO SOME_ID, SOME_NAME;
+        EXIT WHEN S%NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE(SOME_ID || ' ' || SOME_NAME);
+    END LOOP;
+    CLOSE S;
+END;
+/
