@@ -1,0 +1,111 @@
+/* PL/SQL */
+CREATE TABLE CAVE (
+    Cave_Id INTEGER PRIMARY KEY,
+    Cave_Name VARCHAR2(50) UNIQUE,
+    Max_Bears INTEGER DEFAULT 4
+);
+
+CREATE TABLE BEAR_TYPE (
+    Bear_Type_Id INTEGER PRIMARY KEY,
+    Bear_Type_Name VARCHAR2(50)
+);
+
+CREATE TABLE BEAR (
+    Bear_Id INTEGER PRIMARY KEY,
+    Bear_Name VARCHAR2(50),
+    Bear_Age INTEGER CHECK (Bear_Age > 0),
+    Bear_Weight INTEGER CHECK (Bear_Weight > 0),
+    Bear_Type_Id INTEGER,
+    Cave_Id INTEGER
+);
+
+CREATE TABLE BEEHIVE (
+    Beehive_Id INTEGER PRIMARY KEY,
+    Beehive_Weight INTEGER DEFAULT 50 CHECK (Beehive_Weight > 0)
+);
+
+CREATE TABLE BEAR_BEEHIVE (
+    Bear_Id INTEGER,
+    Beehive_Id INTEGER,
+    CONSTRAINT PK_BearBeehive PRIMARY KEY (Bear_Id, Beehive_Id)
+);
+
+-- Create foreign keys
+ALTER TABLE BEAR ADD CONSTRAINT FK_Bear_Type_Id
+FOREIGN KEY (Bear_Type_Id)
+REFERENCES BEAR_TYPE (Bear_Type_Id);
+
+ALTER TABLE BEAR ADD CONSTRAINT FK_Cave_Id
+FOREIGN KEY (Cave_Id)
+REFERENCES CAVE (Cave_Id);
+
+ALTER TABLE BEAR_BEEHIVE ADD CONSTRAINT FK_Bear_Id
+FOREIGN KEY (Bear_Id)
+REFERENCES BEAR (Bear_Id);
+
+ALTER TABLE BEAR_BEEHIVE ADD CONSTRAINT FK_Beehive_Id
+FOREIGN KEY (Beehive_Id)
+REFERENCES BEEHIVE (Beehive_Id);
+
+-- Populate
+INSERT INTO CAVE (Cave_Id, Cave_Name, Max_Bears)
+VALUES (1, 'Yosemite', 4);
+INSERT INTO CAVE (Cave_Id, Cave_Name, Max_Bears)
+VALUES (2, 'Yellowstone', 5);
+
+INSERT INTO BEEHIVE VALUES (1, 35);
+INSERT INTO BEEHIVE VALUES (2, 55);
+
+INSERT INTO BEAR_TYPE VALUES (1, 'Picnic');
+
+INSERT INTO BEAR VALUES (1, 'Yogi', 30, 400, 1, 1);
+INSERT INTO BEAR VALUES (2, 'Boo Boo', 30, 200, 1, 2);
+
+INSERT INTO BEAR_BEEHIVE VALUES (1, 1);
+INSERT INTO BEAR_BEEHIVE VALUES (2, 2);
+
+-- Sequence
+CREATE SEQUENCE SQ_BEAR_PK START WITH 3 INCREMENT BY 1;
+
+-- Trigger (before insert, use sequence)
+CREATE OR REPLACE TRIGGER TR_INSERT_BEAR
+BEFORE INSERT ON BEAR
+FOR EACH ROW
+BEGIN
+    SELECT SQ_BEAR_PK.NEXTVAL INTO :NEW.Bear_Id FROM DUAL;
+END;
+/
+
+-- View
+CREATE VIEW VW_BEARS_PER_CAVE (Location, Total) AS
+SELECT Cave_Name, COUNT(Bear_Id) FROM CAVE, BEAR
+WHERE BEAR.Cave_Id = CAVE.Cave_Id
+GROUP BY Cave_Name;
+
+-- Stored Procedure SP_FEED_BEAR
+-- INPUTS: Bear_Id, Beehive_Id, Honey_Amt
+-- Increase/decerease bear/hive weight by honey_amt
+CREATE OR REPLACE PROCEDURE SP_FEED_BEAR
+(B_ID IN NUMBER, H_ID IN NUMBER, HONEY_AMT IN NUMBER) AS
+BEGIN
+    --SAVEPOINT;
+    
+    UPDATE BEEHIVE SET beehive_weight = beehive_weight - HONEY_AMT
+        WHERE beehive_id = h_id;
+    UPDATE BEAR SET bear_weight = bear_weight + HONEY_AMT
+        WHERE bear_id = b_id;
+    
+    --ROLLBACK    
+    COMMIT;
+END;
+/
+
+--Test SP_FEED_BEAR
+BEGIN
+    SP_FEED_BEAR(1, 1, 5);
+END;
+/
+
+SELECT * FROM BEAR, BEEHIVE;
+
+Commit;
