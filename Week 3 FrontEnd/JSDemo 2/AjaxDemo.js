@@ -16,11 +16,3 @@ function loadDoc() {
     xhr.open('GET', 'hello.txt');
     xhr.send();
 }
-function reqListener () {
-    console.log(this.responseText);
-}
-
-var oReq = new XMLHttpRequest();
-oReq.addEventListener("load", reqListener);
-oReq.open("GET", "hello.txt");
-oReq.send();
