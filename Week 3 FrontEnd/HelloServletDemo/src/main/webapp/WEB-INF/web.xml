@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
+  <display-name>HelloServletDemo</display-name>
+  
+  <servlet>
+  	<servlet-name>hello</servlet-name>
+  	<servlet-class>com.revature.servlets.HelloServlet</servlet-class>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>hello</servlet-name>
+  	<url-pattern>/hello</url-pattern>
+  </servlet-mapping>
+  
+  <filter>
+  	<filter-name>helloFilter</filter-name>
+  	<filter-class>com.revature.servlets.HelloFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+  	<filter-name>helloFilter</filter-name>
+  	<url-pattern>*.filter</url-pattern>
+  </filter-mapping>
+  
+  <context-param>
+  	<param-name>FavoriteColor</param-name>
+  	<param-value>blue</param-value>
+  </context-param>
+  
+  <servlet>
+  	<servlet-name>forred</servlet-name>
+  	<servlet-class>com.revature.servlets.ForwardRedirectServlet</servlet-class>
+  	<init-param>
+  		<param-name>FavoriteCar</param-name>
+  		<param-value>AE86</param-value>
+  	</init-param>
+  	<load-on-startup>1</load-on-startup>
+  </servlet>
+  
+  <servlet-mapping>
+  	<servlet-name>forred</servlet-name>
+  	<url-pattern>/forred</url-pattern>
+  </servlet-mapping>
+</web-app>

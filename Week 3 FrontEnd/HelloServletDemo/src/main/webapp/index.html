@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Hello Servlet Demo</title>
+		<meta charset="utf-8"/>
+	</head>
+	
+	<body>
+		<h2>Click to send a get to hello servlet</h2>
+		<form action="hello" method="get">
+			<label>Operand 1</label>
+			<input type="number" name="op1">
+			<br>
+			<label>Operand 2</label>
+			<input type="number" name="op2">
+			<input type="submit" value="Add"/>
+		</form>
+		
+		
+		<h2>Click to send a post to hello servlet</h2>
+		<form action="hello" method="post">
+			<label>Operand 1</label>
+			<input type="number" name="op1">
+			<br>
+			<label>Operand 2</label>
+			<input type="number" name="op2">
+			<input type="submit" value="Add using post"/>
+		</form>
+		
+		<h2>Click to be filtered</h2>
+		<form action="hello.filter" method="get">
+			<input type="hidden" value="blockRequest" name="myParam">
+			<input type="submit" value="Filter Me!">
+		</form>
+		
+		<h2>Forward/Redirect</h2>
+		<form action="forred" method="GET">
+			<input type="submit" name="Forward">
+		</form>
+		<form action="forred" method="POST">
+			<input type="submit" name="Redirect">
+		</form>
+	</body>
+</html>
