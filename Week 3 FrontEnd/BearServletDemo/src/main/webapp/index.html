@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>BearServletDemo</title>
+	</head>
+	
+	<body>
+		<button type="button" onclick="loadCaves()">Load Caves</button>
+		<div id="caves"></div>
+		
+		<button type="button" onclick="postCave()">Send Cave</button>
+	</body>
+	
+	<script>
+		function loadCaves() {
+			let xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function() {
+				if(this.readyState == 4) {
+					if (this.status == 200) {
+						document.getElementById("caves").innerHTML = xhr.responseText;
+					} else {
+						console.log("error");
+					}
+				}
+			}
+			xhr.open('GET', '/BearServletDemo/CaveController');
+			xhr.send();
+		}
+		
+		function postCave() {
+			let cave = {cave_id: "4", cave_name: "new Cave", max_bears: "5"};
+			let xhr = new XMLHttpRequest();
+			xhr.onreadystatechange = function() {
+				if(this.readyState == 4) {
+					if (this.status == 200) {
+						document.getElementById("caves").innerHTML = xhr.responseText;
+				
+					}
+				}
+			}
+			xhr.open('POST', '/BearServletDemo/CaveController');
+			xhr.send(JSON.stringify(cave));
+		}
+	</script>
+</html>
