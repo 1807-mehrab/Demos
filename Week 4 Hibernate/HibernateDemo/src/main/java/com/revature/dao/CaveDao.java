@@ -14,7 +14,6 @@ public class CaveDao {
 		List<Cave> caves = new ArrayList<>();
 		Session session = HibernateUtil.getSession();
 		caves = session.createQuery("from Cave").list();
-		session.close();
 		return caves;
 	}
 	
@@ -35,7 +34,16 @@ public class CaveDao {
 		Transaction tx = session.beginTransaction();
 		int result = (int) session.save(c);
 		tx.commit();
-		session.close();
 		return result;
+	}
+	
+	public Cave findCave(int cave_id) {
+		Session session = HibernateUtil.getSession();
+		session.beginTransaction();
+		
+		Cave c = (Cave) session.load(Cave.class, cave_id);
+		
+		session.getTransaction().commit();
+		return c;
 	}
 }

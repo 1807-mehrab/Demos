@@ -16,7 +16,11 @@
 			org.hibernate.dialect.Oracle10gDialect
 		</property>
 		<property name="hibernate.show_sql">true</property>
+		<property name="hibernate.hbm2ddl.auto">update</property>
 		
 		<mapping resource="Cave.hbm.xml"/>
+		<mapping class="com.revature.domain.Bear"/>
+		<mapping class="com.revature.domain.Animal"/>
+		<mapping class="com.revature.domain.Bat"/>
 	</session-factory>
 </hibernate-configuration>

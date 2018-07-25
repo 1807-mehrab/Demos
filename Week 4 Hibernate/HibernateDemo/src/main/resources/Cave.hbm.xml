@@ -5,7 +5,7 @@
 <hibernate-mapping>
 	<class name="com.revature.domain.Cave" table="CAVE">
 		<id name="cave_id" column="cave_id">
-			<generator class="assigned"/>
+			<generator class="increment"/>
 		</id>
 		
 		<property name="cave_name" column="cave_name"/>
