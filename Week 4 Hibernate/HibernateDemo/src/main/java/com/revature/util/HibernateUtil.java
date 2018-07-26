@@ -7,6 +7,8 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.service.ServiceRegistry;
 
 public class HibernateUtil {
+	private static SessionFactory sf = sessionFactory("hibernate.cfg.xml");
+	
 	private static SessionFactory sessionFactory(String filename) {
 		Configuration config = new Configuration().configure(filename);
 		
@@ -17,6 +19,10 @@ public class HibernateUtil {
 	}
 	
 	public static Session getSession() {
-		return sessionFactory("hibernate.cfg.xml").openSession();
+		return sf.openSession();
+	}
+	
+	public static void shutdown() {
+		sf.close();
 	}
 }

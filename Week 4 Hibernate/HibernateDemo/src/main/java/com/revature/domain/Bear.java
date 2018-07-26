@@ -2,6 +2,13 @@ package com.revature.domain;
 
 import javax.persistence.*;
 
+@NamedQueries({
+	@NamedQuery(
+			name="findBearByName",
+			query="from Bear where bear_name = :nameVar"
+	)
+})
+
 @Entity
 @Table(name = "BEAR")
 public class Bear {
@@ -20,7 +27,7 @@ public class Bear {
 	@Column(name="BEAR_WEIGHT")
 	private double weight;
 	
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	@JoinColumn(name="BEAR_CAVE")
 	Cave cave;
 
@@ -78,10 +85,10 @@ public class Bear {
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public String toString() {
-		return "Bear [id=" + id + ", name=" + name + ", age=" + age + ", weight=" + weight + ", cave=" + cave + "]";
-	}
+//	@Override
+//	public String toString() {
+//		return "Bear [id=" + id + ", name=" + name + ", age=" + age + ", weight=" + weight + ", cave=" + cave + "]";
+//	}
 	
 	
 }
