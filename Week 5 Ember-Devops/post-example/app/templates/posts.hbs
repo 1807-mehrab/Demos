@@ -1,0 +1,8 @@
+<h1>This is our posts route</h1>
+{{outlet}}
+
+{{#each model as |post|}}
+    <h3>{{post.title}}</h3>
+    <p>{{post.body}}</p>
+    <p>By: {{post.userId.name}}</p>
+{{/each}}

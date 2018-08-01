@@ -1,3 +1,17 @@
-<h1>Welcome to breakfast</h1>
-<br>
-{{outlet}}
+<div class="container">
+    <div class="row">
+        <div class="col-md-2">
+            Time for breakfast!
+        </div>
+        <div class="col-md-10">
+            {{#link-to 'cook'}}
+            Cook
+            {{/link-to}}
+        </div>
+    </div>
+    <div class="row">
+        <div>
+            {{outlet}}
+        </div>
+    </div>
+</div>
