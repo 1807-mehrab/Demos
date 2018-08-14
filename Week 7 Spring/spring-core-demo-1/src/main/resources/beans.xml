@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+	<!-- 
+	<bean name="BeanBySetter" class="com.revature.beans.BeanASetter">
+		<property name="b" ref="BeanNamedB"/>
+	</bean>
+	
+	<bean name="BeanByConstructor" class="com.revature.beans.BeanAConstructor">
+		<constructor-arg ref="BeanBReference"></constructor-arg>
+	</bean>
+	<bean name="BeanNamedB" class="com.revature.beans.BeanB">
+		<property name="message" value="Hello World!"></property>
+	</bean>
+	
+	<bean name="BeanBReference" class="com.revature.beans.BeanB">
+		<property name="message" value="Hello Spring!"></property>
+	</bean>
+	 -->
+	
+	<bean name="BeanB" class="com.revature.beans.BeanB">
+		<property name="message" value="Automagically"></property>
+	</bean>
+
+	<context:component-scan base-package="com.revature.beans"></context:component-scan>
+
+</beans>
