@@ -15,6 +15,11 @@ public class Driver {
 		//p.setName("Mehrab");
 		System.out.println(p.getName());
 		System.out.println(p.getP().getName());
+		p.setName("Harry");
+		
+		Person p2 = (Person) context.getBean("person");
+		System.out.println(p2.getName());
+		System.out.println(p2.getP().getName());
 		((AbstractApplicationContext) context).close();
 	}
 
