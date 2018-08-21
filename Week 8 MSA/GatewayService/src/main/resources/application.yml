@@ -1,0 +1,24 @@
+server:
+  port: 9090
+  
+spring:
+  application:
+    name: zuul
+    
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+      
+zuul:
+  prefix: /api
+  routes:
+    test:
+      path: /google/**
+      url: http://www.google.com
+    customer-by-address: #don't do it this way
+      path: /cba/**
+      url: http://localhost:8989
+    customer-by-eureka:
+      path: /cbe/**
+      serviceId: customer-service
